@@ -29,6 +29,11 @@ class MainActivity : ComponentActivity() {
         val inputEditText: EditText = findViewById(R.id.myEditTextText)
         val submitButton: Button = findViewById(R.id.myButton)
         val outputText: TextView = findViewById(R.id.myTextView)
+        val quitButton: Button = findViewById(R.id.quitButton)
+
+        quitButton.setOnClickListener {
+            exitProcess(0)
+        }
 
         submitButton.setOnClickListener {
             val inputArray = getArrayFromString(inputEditText.text.toString())
