@@ -35,34 +35,14 @@ class MainActivity : ComponentActivity() {
             if(inputArray.array == null) {
                 outputText.text = inputArray.errorMessage
             } else {
-                val numbers = inputArray.array
-                val intermediateSteps = StringBuilder("Input Array: ${numbers.joinToString(" ")}\n")
-
-                // Handler to schedule delayed tasks
                 val handler = Handler(mainLooper)
-
-                // Display initial array immediately
-                outputText.text = intermediateSteps.toString()
-
-                // Perform insertion sort with intermediate steps and delays
+                var numbers: IntArray = inputArray.array
+                val intermediateSteps = StringBuilder("Input Array: ${numbers.joinToString(" ")}\n")
                 for (i in 1 until numbers.size) {
-                    val key = numbers[i]
-                    var j = i - 1
-
-                    // Post delayed task to run the sorting step
                     handler.postDelayed({
-                        while (j >= 0 && numbers[j] > key) {
-                            numbers[j + 1] = numbers[j]
-                            j--
-                        }
-                        numbers[j + 1] = key
-
-                        // Append current state of the array to intermediate steps
+                        numbers = intermediateInsertionSort(numbers, i)
                         intermediateSteps.append(numbers.joinToString(" ")).append("\n")
-
-                        // Update the TextView with the current state
                         outputText.text = intermediateSteps.toString()
-
                     }, i * 1000L) // 1 second delay between each step
                 }
             }
@@ -87,5 +67,19 @@ class MainActivity : ComponentActivity() {
 
         val numbers = inputArray.map { it.toInt() }.toMutableList()
         return InputArray(numbers.toIntArray(), VALID_ARRAY_TEXT)
+    }
+
+    fun intermediateInsertionSort(numbers: IntArray, i: Int): IntArray {
+        val intermediateResult = numbers.copyOf()
+
+        for(j in i downTo 1) {
+            if(intermediateResult[j] < intermediateResult[j - 1]) {
+                val temp = intermediateResult[j]
+                intermediateResult[j] = intermediateResult[j - 1]
+                intermediateResult[j - 1] = temp
+            }
+        }
+
+        return intermediateResult
     }
 }
