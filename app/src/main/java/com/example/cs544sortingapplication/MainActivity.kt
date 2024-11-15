@@ -2,6 +2,7 @@ package com.example.cs544sortingapplication
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Handler
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.ComponentActivity
@@ -21,7 +22,6 @@ import android.widget.TextView
 
 class MainActivity : ComponentActivity() {
 
-    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -36,14 +36,42 @@ class MainActivity : ComponentActivity() {
             val inputText = inputEditText.text.toString().trim()
             val inputArray = inputText.split(" ").filter { it.isNotEmpty() }
 
-            // Check if each element in inputArray is a single digit between 0 and 9
-            if (inputArray.all { it.length == 1 && it[0] in '0'..'9' }) {
-                // If all elements are valid, display them
-                outputText.text = inputArray.joinToString(", ")
+            if (inputArray.size in 3..8 && inputArray.all { it.length == 1 && it[0] in '0'..'9' }) {
+                // Convert input to a list of integers
+                val numbers = inputArray.map { it.toInt() }.toMutableList()
+                val intermediateSteps = StringBuilder("Input Array: ${numbers.joinToString(" ")}\n")
+
+                // Handler to schedule delayed tasks
+                val handler = Handler(mainLooper)
+
+                // Display initial array immediately
+                outputText.text = intermediateSteps.toString()
+
+                // Perform insertion sort with intermediate steps and delays
+                for (i in 1 until numbers.size) {
+                    val key = numbers[i]
+                    var j = i - 1
+
+                    // Post delayed task to run the sorting step
+                    handler.postDelayed({
+                        while (j >= 0 && numbers[j] > key) {
+                            numbers[j + 1] = numbers[j]
+                            j--
+                        }
+                        numbers[j + 1] = key
+
+                        // Append current state of the array to intermediate steps
+                        intermediateSteps.append(numbers.joinToString(" ")).append("\n")
+
+                        // Update the TextView with the current state
+                        outputText.text = intermediateSteps.toString()
+
+                    }, i * 1000L) // 1 second delay between each step
+                }
+            } else if (inputArray.size < 3 || inputArray.size > 8) {
+                outputText.text = "Please enter at least 3 digits and a max of 8 digits"
             } else {
-                // Show error if any element is not a single digit
-                outputText.text = "Please enter the array in the format 'digit digit " +
-                        "digit digit' where digits are between 0-9"
+                outputText.text = "Please enter the array in the format 'digit digit digit ...' where digits are between 0-9"
             }
         }
     }
