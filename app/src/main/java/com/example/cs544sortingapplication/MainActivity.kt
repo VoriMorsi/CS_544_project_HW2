@@ -1,26 +1,24 @@
 package com.example.cs544sortingapplication
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.constraintlayout.widget.ConstraintLayout
-import com.example.cs544sortingapplication.ui.theme.CS544SortingApplicationTheme
 import android.widget.TextView
 import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity() {
+    final val MIN_ELEMENTS = 3
+    final val MAX_ELEMENTS = 8
+
+    final val ARRAY_TO_SMALL_ERROR_TEXT = "Please enter at least 3 values"
+    final val ARRAY_TO_LARGE_ERROR_TEXT = "Please enter at most 8 values"
+    final val INVALID_ELEMENT_ERROR_TEXT = "Please only enter integers between 0 and 9"
+    final val VALID_ARRAY_TEXT = "Valid array"
+
+    data class InputArray(val array: IntArray?, val errorMessage: String)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,16 +31,11 @@ class MainActivity : ComponentActivity() {
         val outputText: TextView = findViewById(R.id.myTextView)
 
         submitButton.setOnClickListener {
-            val inputText = inputEditText.text.toString().trim()
-            val inputArray = inputText.split(" ").filter { it.isNotEmpty() }
-
-            if (inputArray[0].lowercase() == "quit") {
-            exitProcess(0)
-        }
-
-            if (inputArray.size in 3..8 && inputArray.all { it.length == 1 && it[0] in '0'..'9' }) {
-                // Convert input to a list of integers
-                val numbers = inputArray.map { it.toInt() }.toMutableList()
+            val inputArray = getArrayFromString(inputEditText.text.toString())
+            if(inputArray.array == null) {
+                outputText.text = inputArray.errorMessage
+            } else {
+                val numbers = inputArray.array
                 val intermediateSteps = StringBuilder("Input Array: ${numbers.joinToString(" ")}\n")
 
                 // Handler to schedule delayed tasks
@@ -72,11 +65,27 @@ class MainActivity : ComponentActivity() {
 
                     }, i * 1000L) // 1 second delay between each step
                 }
-            } else if (inputArray.size < 3 || inputArray.size > 8) {
-                outputText.text = "Please enter at least 3 digits and a max of 8 digits"
-            } else {
-                outputText.text = "Please enter the array in the format 'digit digit digit ...' where digits are between 0-9"
             }
         }
+    }
+
+    fun getArrayFromString(input: String): InputArray {
+        val trimmedInput = input.trim()
+        val inputArray = trimmedInput.split(" ").filter { it.isNotEmpty() }
+
+        if(!inputArray.all { it.length == 1 && it[0] in '0'..'9' }) {
+            return InputArray(null, INVALID_ELEMENT_ERROR_TEXT)
+        }
+
+        if(inputArray.size < MIN_ELEMENTS) {
+            return InputArray(null, ARRAY_TO_SMALL_ERROR_TEXT);
+        }
+
+        if(inputArray.size > MAX_ELEMENTS) {
+            return InputArray(null, ARRAY_TO_LARGE_ERROR_TEXT);
+        }
+
+        val numbers = inputArray.map { it.toInt() }.toMutableList()
+        return InputArray(numbers.toIntArray(), VALID_ARRAY_TEXT)
     }
 }
