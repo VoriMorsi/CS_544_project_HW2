@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.cs544sortingapplication.ui.theme.CS544SortingApplicationTheme
 import android.widget.TextView
-
+import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity() {
 
@@ -35,6 +35,10 @@ class MainActivity : ComponentActivity() {
         submitButton.setOnClickListener {
             val inputText = inputEditText.text.toString().trim()
             val inputArray = inputText.split(" ").filter { it.isNotEmpty() }
+
+            if (inputArray[0].lowercase() == "quit") {
+            exitProcess(0)
+        }
 
             if (inputArray.size in 3..8 && inputArray.all { it.length == 1 && it[0] in '0'..'9' }) {
                 // Convert input to a list of integers
