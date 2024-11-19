@@ -1,13 +1,21 @@
 package com.example.cs544sortingapplication
 
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
-import android.widget.TextView
+import androidx.compose.ui.text.font.Typeface
 import kotlin.system.exitProcess
+
 
 class MainActivity : ComponentActivity() {
     data class InputArray(val array: IntArray?, val errorMessage: String)
@@ -34,12 +42,37 @@ class MainActivity : ComponentActivity() {
             } else {
                 val handler = Handler(mainLooper)
                 var numbers: IntArray = inputArray.array
-                val intermediateSteps = StringBuilder("Input Array: ${numbers.joinToString(" ")}\n")
+                val intermediateSteps = SpannableStringBuilder("Input Array: ${numbers.joinToString(" ")}\n")
                 for (i in 1 until numbers.size) {
                     handler.postDelayed({
                         numbers = intermediateInsertionSort(numbers, i)
-                        intermediateSteps.append(numbers.joinToString(" ")).append("\n")
-                        outputText.text = intermediateSteps.toString()
+                        //intermediateSteps.append(numbers.joinToString(" ")).append("\n")
+                        val spannableString = SpannableString(numbers.joinToString(" ") + "\n")
+                        val currentElementStringIndex = i * 2 + 1
+                        if(currentElementStringIndex < spannableString.length - 1) {
+                            spannableString.setSpan(
+                                StyleSpan(android.graphics.Typeface.BOLD),
+                                currentElementStringIndex,
+                                currentElementStringIndex + 2,
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                            )
+                            spannableString.setSpan(
+                                ForegroundColorSpan(Color.RED),
+                                currentElementStringIndex,
+                                currentElementStringIndex + 2,
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                            )
+                        }
+
+                        spannableString.setSpan(
+                            ForegroundColorSpan(Color.BLUE),
+                            0,
+                            currentElementStringIndex + 1,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+
+                        intermediateSteps.append(spannableString)
+                        outputText.text = intermediateSteps
                     }, i * 1000L) // 1 second delay between each step
                 }
             }
