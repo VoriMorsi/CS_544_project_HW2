@@ -43,10 +43,8 @@ class MainActivity : ComponentActivity() {
                 val handler = Handler(mainLooper)
                 var numbers: IntArray = inputArray.array
                 val intermediateSteps = SpannableStringBuilder("Input Array: ${numbers.joinToString(" ")}\n")
-                for (i in 1 until numbers.size) {
+                for (i in 0 until numbers.size) {
                     handler.postDelayed({
-                        numbers = intermediateInsertionSort(numbers, i)
-                        //intermediateSteps.append(numbers.joinToString(" ")).append("\n")
                         val spannableString = SpannableString(numbers.joinToString(" ") + "\n")
                         val currentElementStringIndex = i * 2 + 1
                         if(currentElementStringIndex < spannableString.length - 1) {
@@ -73,6 +71,8 @@ class MainActivity : ComponentActivity() {
 
                         intermediateSteps.append(spannableString)
                         outputText.text = intermediateSteps
+
+                        numbers = intermediateInsertionSort(numbers, i)
                     }, i * 1000L) // 1 second delay between each step
                 }
             }
