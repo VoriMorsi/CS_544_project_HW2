@@ -40,6 +40,7 @@ class MainActivity : ComponentActivity() {
             if (inputArray.array == null) {
                 outputText.text = inputArray.errorMessage
             } else {
+                submitButton.isEnabled = false // Disable the button
                 val handler = Handler(mainLooper)
                 var numbers: IntArray = inputArray.array
                 val intermediateSteps = SpannableStringBuilder("Input Array: ${numbers.joinToString(" ")}\n")
@@ -73,6 +74,11 @@ class MainActivity : ComponentActivity() {
 
                         intermediateSteps.append(spannableString)
                         outputText.text = intermediateSteps
+
+                        // Re-enable the button after the last step
+                        if (i == numbers.size - 1) {
+                            submitButton.isEnabled = true
+                        }
                     }, i * 1000L) // 1 second delay between each step
                 }
             }
