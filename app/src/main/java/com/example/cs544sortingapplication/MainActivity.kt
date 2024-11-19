@@ -13,7 +13,6 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.ui.text.font.Typeface
 import kotlin.system.exitProcess
 
 
