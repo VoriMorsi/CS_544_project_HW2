@@ -60,7 +60,7 @@
         android:id="@+id/textView"
         android:layout_width="211dp"
         android:layout_height="90dp"
-        android:text="Blue = Sorted \nRed = current number\nGreen = where last number was placed \nBlack = unsorted"
+        android:text="Blue = Sorted\nRed = Current number\nGreen = Previous number\nBlack = Unsorted"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
